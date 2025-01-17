@@ -30,10 +30,10 @@ export default function Home(): JSX.Element {
           <h1 style={{margin: 0}}>Kargo</h1>
           <span>Learn how to use Kargo for GitOps promotions of stages</span>
           <div style={{marginTop: '24px'}}>
-            <Link to='/new-docs/user-guide/core-concepts'>
+            <Link to='/user-guide/core-concepts'>
               <Button>Overview</Button>
             </Link>
-            <Link to='/new-docs/user-guide/examples'>
+            <Link to='/user-guide/examples'>
               <Button btnType='primary' style={{marginLeft: '24px'}}>Learn By Examples</Button>
             </Link>
           </div>
@@ -47,11 +47,11 @@ export default function Home(): JSX.Element {
                 title: 'Installation',
                 description: (
                   <>
-                    <Link to='/new-docs/operator-guide/basic-installation' className='highlight'>Basic Installation</Link>
+                    <Link to='/operator-guide/basic-installation' className='highlight'>Basic Installation</Link>
                     <br />
-                    <Link to='/new-docs/operator-guide/advanced-installation/advanced-with-helm' className='highlight'>With Helm</Link>
+                    <Link to='/operator-guide/advanced-installation/advanced-with-helm' className='highlight'>With Helm</Link>
                     <br />
-                    <Link to='/new-docs/operator-guide/advanced-installation/advanced-with-argocd' className='highlight'>With ArgoCD</Link>
+                    <Link to='/operator-guide/advanced-installation/advanced-with-argocd' className='highlight'>With ArgoCD</Link>
                   </>
                 ),
                 headerStyle: {
@@ -59,7 +59,7 @@ export default function Home(): JSX.Element {
                   color: 'white'
                 },
                 link: {
-                  to: '/new-docs/operator-guide/'
+                  to: '/operator-guide/'
                 }
               },
               {
@@ -71,7 +71,7 @@ export default function Home(): JSX.Element {
                   color: 'white'
                 },
                 link: {
-                  to: '/new-docs/user-guide/'
+                  to: '/user-guide/'
                 }
               },
               {
@@ -83,7 +83,7 @@ export default function Home(): JSX.Element {
                   color: 'white'
                 },
                 link: {
-                  to: '/new-docs/quickstart/'
+                  to: '/quickstart/'
                 }
               },
             ]}
@@ -97,11 +97,11 @@ export default function Home(): JSX.Element {
                 title: 'References',
                 description: (
                   <>
-                    <Link to='/new-docs/user-guide/reference-docs/crds' className='highlight'>CRD Docs</Link>
+                    <Link to='/user-guide/reference-docs/crds' className='highlight'>CRD Docs</Link>
                     <br />
-                    <Link to='/new-docs/user-guide/reference-docs/promotion-steps' className='highlight'>Promotion Steps</Link>
+                    <Link to='/user-guide/reference-docs/promotion-steps' className='highlight'>Promotion Steps</Link>
                     <br />
-                    <Link to='/new-docs/user-guide/reference-docs/expressions' className='highlight'>Expression Language</Link>
+                    <Link to='/user-guide/reference-docs/expressions' className='highlight'>Expression Language</Link>
                   </>
                 ),
                 headerStyle: {
@@ -131,7 +131,7 @@ export default function Home(): JSX.Element {
                   color: 'white'
                 },
                 link: {
-                  to: '/new-docs/contributor-guide/'
+                  to: '/contributor-guide/'
                 }
               }
             ]}

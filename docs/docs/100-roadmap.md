@@ -4,7 +4,7 @@ Description: See what's on the roadmap of Kargo and find out more about the late
 ---
 
 :::warning
-Kent will refresh this by the end of the week.
+Kent will refresh this early next week.
 :::
 
 # Kargo Roadmap
