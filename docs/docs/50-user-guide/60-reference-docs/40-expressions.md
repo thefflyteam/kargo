@@ -502,3 +502,66 @@ config:
 config:
   chartVersion: ${{ chartFrom("https://example.com/charts", "my-chart", warehouse("my-warehouse")).Version }}
 ```
+
+### `semverDiff(version1, version2)`
+
+The `semverDiff()` function compares two semantic version strings and returns
+the difference level between them. It has two required arguments:
+
+- `version1` (Required): A string representing the first semantic version to compare.
+- `version2` (Required): A string representing the second semantic version to compare.
+
+The function returns one of the following strings:
+
+| Return Value | Description |
+|--------------|-------------|
+| `MAJOR` | The major version components differ. |
+| `MINOR` | The minor version components differ (major versions are the same). |
+| `PATCH` | The patch version components differ (major and minor versions are the same). |
+| `METADATA` | Only the build metadata differs (major, minor, and patch versions are the same). |
+| `NONE` | The versions are identical. |
+| `INCOMPARABLE` | One or both version strings are invalid or not valid semantic versions. |
+
+:::info
+The function uses the [Semantic Versioning](https://semver.org/) specification
+to parse and compare versions. It supports versions with or without the `v`
+prefix, as well as prerelease and build metadata components.
+:::
+
+Examples:
+
+```yaml
+config:
+  # Basic version comparison
+  diffLevel: ${{ semverDiff("1.0.0", "2.0.0") }} # Returns "MAJOR"
+```
+
+```yaml
+config:
+  # Minor version difference
+  diffLevel: ${{ semverDiff("1.1.0", "1.2.0") }} # Returns "MINOR"
+```
+
+```yaml
+config:
+  # Patch version difference
+  diffLevel: ${{ semverDiff("1.1.1", "1.1.2") }} # Returns "PATCH"
+```
+
+```yaml
+config:
+  # Metadata difference
+  diffLevel: ${{ semverDiff("1.1.1+build1", "1.1.1+build2") }} # Returns "METADATA"
+```
+
+```yaml
+config:
+  # Using with image tags to determine update significance
+  updateType: ${{ semverDiff(imageFrom("myapp").Tag, "1.2.0") }}
+```
+
+```yaml
+config:
+  # Conditional logic based on version difference
+  shouldDeploy: ${{ semverDiff(chartFrom("oci://example.com/chart").Version, "2.0.0") != "INCOMPARABLE" }}
+```

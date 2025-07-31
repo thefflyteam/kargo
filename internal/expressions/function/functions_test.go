@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/expr-lang/expr"
 	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
@@ -1294,4 +1295,199 @@ func Test_freightMetadata(t *testing.T) {
 			tt.assertions(t, result, err)
 		})
 	}
+}
+
+func Test_semverDiff(t *testing.T) {
+	tests := []struct {
+		name       string
+		args       []any
+		assertions func(t *testing.T, result any, err error)
+	}{
+		{
+			name: "major version difference",
+			args: []any{"1.0.0", "2.0.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "MAJOR", result)
+			},
+		},
+		{
+			name: "minor version difference",
+			args: []any{"1.1.0", "1.2.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "MINOR", result)
+			},
+		},
+		{
+			name: "patch version difference",
+			args: []any{"1.1.1", "1.1.2"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "PATCH", result)
+			},
+		},
+		{
+			name: "metadata difference",
+			args: []any{"1.1.1+build1", "1.1.1+build2"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "METADATA", result)
+			},
+		},
+		{
+			name: "no difference",
+			args: []any{"1.2.3", "1.2.3"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "NONE", result)
+			},
+		},
+		{
+			name: "invalid first version",
+			args: []any{"invalid", "1.0.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "INCOMPARABLE", result)
+			},
+		},
+		{
+			name: "invalid second version",
+			args: []any{"1.0.0", "invalid"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "INCOMPARABLE", result)
+			},
+		},
+		{
+			name: "both versions invalid",
+			args: []any{"invalid1", "invalid2"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "INCOMPARABLE", result)
+			},
+		},
+		{
+			name: "semver with prerelease",
+			args: []any{"1.0.0-alpha", "1.0.0-beta"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "NONE", result) // Prerelease versions are considered equal for diff purposes
+			},
+		},
+		{
+			name: "complex semver with metadata and prerelease",
+			args: []any{"1.0.0-alpha.1+build.1", "1.0.0-alpha.1+build.2"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "METADATA", result)
+			},
+		},
+		{
+			name: "major difference with prerelease",
+			args: []any{"1.0.0-alpha", "2.0.0-alpha"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "MAJOR", result)
+			},
+		},
+		{
+			name: "minor difference with prerelease",
+			args: []any{"1.1.0-alpha", "1.2.0-alpha"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "MINOR", result)
+			},
+		},
+		{
+			name: "patch difference with prerelease",
+			args: []any{"1.1.1-alpha", "1.1.2-alpha"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "PATCH", result)
+			},
+		},
+		{
+			name: "no arguments",
+			args: []any{},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.ErrorContains(t, err, "expected 2 arguments")
+				assert.Nil(t, result)
+			},
+		},
+		{
+			name: "one argument",
+			args: []any{"1.0.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.ErrorContains(t, err, "expected 2 arguments")
+				assert.Nil(t, result)
+			},
+		},
+		{
+			name: "too many arguments",
+			args: []any{"1.0.0", "2.0.0", "3.0.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.ErrorContains(t, err, "expected 2 arguments")
+				assert.Nil(t, result)
+			},
+		},
+		{
+			name: "invalid first argument type",
+			args: []any{123, "1.0.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.ErrorContains(t, err, "first argument must be string")
+				assert.Nil(t, result)
+			},
+		},
+		{
+			name: "invalid second argument type",
+			args: []any{"1.0.0", 123},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.ErrorContains(t, err, "second argument must be string")
+				assert.Nil(t, result)
+			},
+		},
+		{
+			name: "empty version strings",
+			args: []any{"", ""},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "INCOMPARABLE", result)
+			},
+		},
+		{
+			name: "loose semver format",
+			args: []any{"v1.0.0", "v2.0.0"},
+			assertions: func(t *testing.T, result any, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, "MAJOR", result)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := semverDiff(tt.args...)
+			tt.assertions(t, result, err)
+		})
+	}
+}
+
+func Test_UtilityOperations(t *testing.T) {
+	utilityOps := UtilityOperations()
+	
+	// Verify that UtilityOperations returns the expected number of functions
+	assert.Len(t, utilityOps, 1, "UtilityOperations should return exactly 1 function")
+	
+	// This test verifies that the UtilityOperations function group includes
+	// the semverDiff function by attempting to compile an expression that uses it.
+	// If the function is not available, the compilation would fail.
+	program, err := expr.Compile("semverDiff('1.0.0', '2.0.0')", utilityOps...)
+	assert.NoError(t, err, "should be able to compile expression with semverDiff function")
+	assert.NotNil(t, program, "compiled program should not be nil")
+	
+	// Execute the compiled program to verify it works correctly
+	result, err := expr.Run(program, nil)
+	assert.NoError(t, err, "should be able to execute expression with semverDiff function")
+	assert.Equal(t, "MAJOR", result, "semverDiff should return MAJOR for version difference 1.0.0 to 2.0.0")
 }
