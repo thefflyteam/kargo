@@ -635,8 +635,8 @@ func getStatus(
 // semverDiff compares two semantic version strings and returns the difference
 // level between them.
 //
-// It returns one of: "MAJOR", "MINOR", "PATCH", "METADATA", "NONE", or
-// "INCOMPARABLE" if either version is invalid.
+// It returns one of: "Major", "Minor", "Patch", "Metadata", "None", or
+// "Incomparable" if either version is invalid.
 func semverDiff(a ...any) (any, error) {
 	if len(a) != 2 {
 		return nil, fmt.Errorf("expected 2 arguments, got %d", len(a))
@@ -654,25 +654,25 @@ func semverDiff(a ...any) (any, error) {
 
 	ver1, err := semver.NewVersion(ver1Str)
 	if err != nil {
-		return "INCOMPARABLE", nil
+		return "Incomparable", nil
 	}
 	ver2, err := semver.NewVersion(ver2Str)
 	if err != nil {
-		return "INCOMPARABLE", nil
+		return "Incomparable", nil
 	}
 	if ver1.Major() != ver2.Major() {
-		return "MAJOR", nil
+		return "Major", nil
 	}
 	if ver1.Minor() != ver2.Minor() {
-		return "MINOR", nil
+		return "Minor", nil
 	}
 	if ver1.Patch() != ver2.Patch() {
-		return "PATCH", nil
+		return "Patch", nil
 	}
 	if ver1.Metadata() != ver2.Metadata() {
-		return "METADATA", nil
+		return "Metadata", nil
 	}
-	return "NONE", nil
+	return "None", nil
 }
 
 const (

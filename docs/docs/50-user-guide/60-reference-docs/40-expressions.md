@@ -515,12 +515,12 @@ The function returns one of the following strings:
 
 | Return Value | Description |
 |--------------|-------------|
-| `MAJOR` | The major version components differ. |
-| `MINOR` | The minor version components differ (major versions are the same). |
-| `PATCH` | The patch version components differ (major and minor versions are the same). |
-| `METADATA` | Only the build metadata differs (major, minor, and patch versions are the same). |
-| `NONE` | The versions are identical. |
-| `INCOMPARABLE` | One or both version strings are invalid or not valid semantic versions. |
+| `Major` | The major version components differ. |
+| `Minor` | The minor version components differ (major versions are the same). |
+| `Patch` | The patch version components differ (major and minor versions are the same). |
+| `Metadata` | Only the build metadata differs (major, minor, and patch versions are the same). |
+| `None` | The versions are identical. |
+| `Incomparable` | One or both version strings are invalid or not valid semantic versions. |
 
 :::info
 The function uses the [Semantic Versioning](https://semver.org/) specification
@@ -533,25 +533,25 @@ Examples:
 ```yaml
 config:
   # Basic version comparison
-  diffLevel: ${{ semverDiff("1.0.0", "2.0.0") }} # Returns "MAJOR"
+  diffLevel: ${{ semverDiff("1.0.0", "2.0.0") }} # Returns "Major"
 ```
 
 ```yaml
 config:
   # Minor version difference
-  diffLevel: ${{ semverDiff("1.1.0", "1.2.0") }} # Returns "MINOR"
+  diffLevel: ${{ semverDiff("1.1.0", "1.2.0") }} # Returns "Minor"
 ```
 
 ```yaml
 config:
   # Patch version difference
-  diffLevel: ${{ semverDiff("1.1.1", "1.1.2") }} # Returns "PATCH"
+  diffLevel: ${{ semverDiff("1.1.1", "1.1.2") }} # Returns "Patch"
 ```
 
 ```yaml
 config:
   # Metadata difference
-  diffLevel: ${{ semverDiff("1.1.1+build1", "1.1.1+build2") }} # Returns "METADATA"
+  diffLevel: ${{ semverDiff("1.1.1+build1", "1.1.1+build2") }} # Returns "Metadata"
 ```
 
 ```yaml
@@ -563,5 +563,5 @@ config:
 ```yaml
 config:
   # Conditional logic based on version difference
-  shouldDeploy: ${{ semverDiff(chartFrom("oci://example.com/chart").Version, "2.0.0") != "INCOMPARABLE" }}
+  shouldDeploy: ${{ semverDiff(chartFrom("oci://example.com/chart").Version, "2.0.0") != "Incomparable" }}
 ```
