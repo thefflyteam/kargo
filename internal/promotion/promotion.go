@@ -265,17 +265,17 @@ func (s *Step) Skip(
 		env,
 		append(
 			append(
-				exprfn.FreightOperations(
-					ctx,
-					cl,
-					promoCtx.Project,
-					promoCtx.FreightRequests,
-					promoCtx.Freight.References(),
-				),
 				append(
-					exprfn.DataOperations(ctx, cl, cache, promoCtx.Project),
-					exprfn.UtilityOperations()...,
-				)...,
+					exprfn.FreightOperations(
+						ctx,
+						cl,
+						promoCtx.Project,
+						promoCtx.FreightRequests,
+						promoCtx.Freight.References(),
+					),
+					exprfn.DataOperations(ctx, cl, cache, promoCtx.Project)...,
+				),
+				exprfn.UtilityOperations()...,
 			),
 			exprfn.StatusOperations(s.Alias, promoCtx.StepExecutionMetadata)...,
 		)...,
@@ -321,17 +321,17 @@ func (s *Step) GetConfig(
 		s.Config,
 		env,
 		append(
-			exprfn.FreightOperations(
-				ctx,
-				cl,
-				promoCtx.Project,
-				promoCtx.FreightRequests,
-				promoCtx.Freight.References(),
-			),
 			append(
-				exprfn.DataOperations(ctx, cl, cache, promoCtx.Project),
-				exprfn.UtilityOperations()...,
-			)...,
+				exprfn.FreightOperations(
+					ctx,
+					cl,
+					promoCtx.Project,
+					promoCtx.FreightRequests,
+					promoCtx.Freight.References(),
+				),
+				exprfn.DataOperations(ctx, cl, cache, promoCtx.Project)...,
+			),
+			exprfn.UtilityOperations()...,
 		)...,
 	)
 	if err != nil {
@@ -361,11 +361,11 @@ func (s *Step) GetVars(
 			v.Value,
 			s.BuildEnv(promoCtx, StepEnvWithVars(vars)),
 			append(
-				exprfn.FreightOperations(ctx, cl, promoCtx.Project, promoCtx.FreightRequests, promoCtx.Freight.References()),
 				append(
-					exprfn.DataOperations(ctx, cl, cache, promoCtx.Project),
-					exprfn.UtilityOperations()...,
-				)...,
+					exprfn.FreightOperations(ctx, cl, promoCtx.Project, promoCtx.FreightRequests, promoCtx.Freight.References()),
+					exprfn.DataOperations(ctx, cl, cache, promoCtx.Project)...,
+				),
+				exprfn.UtilityOperations()...,
 			)...,
 		)
 		if err != nil {
@@ -387,11 +387,11 @@ func (s *Step) GetVars(
 				StepEnvWithVars(vars),
 			),
 			append(
-				exprfn.FreightOperations(ctx, cl, promoCtx.Project, promoCtx.FreightRequests, promoCtx.Freight.References()),
 				append(
-					exprfn.DataOperations(ctx, cl, cache, promoCtx.Project),
-					exprfn.UtilityOperations()...,
-				)...,
+					exprfn.FreightOperations(ctx, cl, promoCtx.Project, promoCtx.FreightRequests, promoCtx.Freight.References()),
+					exprfn.DataOperations(ctx, cl, cache, promoCtx.Project)...,
+				),
+				exprfn.UtilityOperations()...,
 			)...,
 		)
 		if err != nil {

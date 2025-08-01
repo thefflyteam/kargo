@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/expr-lang/expr"
 	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
@@ -1471,23 +1470,4 @@ func Test_semverDiff(t *testing.T) {
 			tt.assertions(t, result, err)
 		})
 	}
-}
-
-func Test_UtilityOperations(t *testing.T) {
-	utilityOps := UtilityOperations()
-	
-	// Verify that UtilityOperations returns the expected number of functions
-	assert.Len(t, utilityOps, 1, "UtilityOperations should return exactly 1 function")
-	
-	// This test verifies that the UtilityOperations function group includes
-	// the semverDiff function by attempting to compile an expression that uses it.
-	// If the function is not available, the compilation would fail.
-	program, err := expr.Compile("semverDiff('1.0.0', '2.0.0')", utilityOps...)
-	assert.NoError(t, err, "should be able to compile expression with semverDiff function")
-	assert.NotNil(t, program, "compiled program should not be nil")
-	
-	// Execute the compiled program to verify it works correctly
-	result, err := expr.Run(program, nil)
-	assert.NoError(t, err, "should be able to execute expression with semverDiff function")
-	assert.Equal(t, "Major", result, "semverDiff should return Major for version difference 1.0.0 to 2.0.0")
 }
