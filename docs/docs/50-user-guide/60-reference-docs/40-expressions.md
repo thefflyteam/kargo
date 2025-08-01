@@ -531,37 +531,52 @@ prefix, as well as prerelease and build metadata components.
 Examples:
 
 ```yaml
-config:
-  # Basic version comparison
-  diffLevel: ${{ semverDiff("1.0.0", "2.0.0") }} # Returns "Major"
+# Open a pull request only for major version changes
+- uses: git-open-pr
+  if: ${{ semverDiff(chartFrom("oci://example.com/chart").Version, "1.0.0") == "Major" }}
+  config:
+    repoURL: https://github.com/example/config-repo.git
+    sourceBranch: ${{ outputs.push.branch }}
+    targetBranch: stage/${{ ctx.stage }}
+    title: "Major version update detected"
 ```
 
 ```yaml
-config:
-  # Minor version difference
-  diffLevel: ${{ semverDiff("1.1.0", "1.2.0") }} # Returns "Minor"
+# Conditionally execute different steps based on version difference
+- uses: git-open-pr
+  if: ${{ semverDiff(imageFrom("myapp").Tag, "2.0.0") == "Major" }}
+  config:
+    repoURL: https://github.com/example/config-repo.git
+    sourceBranch: ${{ outputs.push.branch }}
+    targetBranch: stage/${{ ctx.stage }}
+    title: "Breaking change: Major version update"
+    labels: ["breaking-change", "needs-review"]
+
+- uses: git-push
+  if: ${{ semverDiff(imageFrom("myapp").Tag, "2.0.0") != "Major" }}
+  config:
+    repoURL: https://github.com/example/config-repo.git
+    targetBranch: stage/${{ ctx.stage }}
+    message: "Minor/patch update: ${{ imageFrom("myapp").Tag }}"
 ```
 
 ```yaml
-config:
-  # Patch version difference
-  diffLevel: ${{ semverDiff("1.1.1", "1.1.2") }} # Returns "Patch"
+# Include version difference information in PR titles
+- uses: git-open-pr
+  config:
+    repoURL: https://github.com/example/config-repo.git
+    sourceBranch: ${{ outputs.push.branch }}
+    targetBranch: stage/${{ ctx.stage }}
+    title: "${{ semverDiff(chartFrom("oci://example.com/chart").Version, outputs.previous.version) }} update: ${{ chartFrom("oci://example.com/chart").Version }}"
 ```
 
 ```yaml
-config:
-  # Metadata difference
-  diffLevel: ${{ semverDiff("1.1.1+build1", "1.1.1+build2") }} # Returns "Metadata"
-```
-
-```yaml
-config:
-  # Using with image tags to determine update significance
-  updateType: ${{ semverDiff(imageFrom("myapp").Tag, "1.2.0") }}
-```
-
-```yaml
-config:
-  # Conditional logic based on version difference
-  shouldDeploy: ${{ semverDiff(chartFrom("oci://example.com/chart").Version, "2.0.0") != "Incomparable" }}
+# Skip processing if versions are incomparable (invalid)
+- uses: helm-update-chart
+  if: ${{ semverDiff(chartFrom("oci://example.com/chart").Version, "0.0.0") != "Incomparable" }}
+  config:
+    path: ./manifests
+    charts:
+    - repository: oci://example.com/chart
+      version: ${{ chartFrom("oci://example.com/chart").Version }}
 ```
